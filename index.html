@@ -2,20 +2,24 @@
 <html>
 <head>
   <title>Website Builder</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap">
   <style>
+    /* Styles for toolbar, editor, and other elements */
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Open Sans', sans-serif;
+      margin: 0;
+      padding: 0;
     }
 
     .toolbar {
       background-color: rgba(0, 0, 0, 0.7);
       color: #ffffff;
       padding: 10px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      z-index: 9999;
+      border-radius: 10px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
     }
 
     .toolbar button {
@@ -23,6 +27,7 @@
       border: none;
       color: #ffffff;
       cursor: pointer;
+      font-weight: bold;
       margin-right: 10px;
     }
 
@@ -31,25 +36,46 @@
     }
 
     .editor {
-      margin-top: 50px;
-      padding: 20px;
+      margin: 20px;
     }
 
-    .editor h1 {
+    .share-bar {
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #ffffff;
+      padding: 10px;
+      border-radius: 10px;
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      z-index: 9999;
+      display: none;
+    }
+
+    .share-bar input[type="text"] {
+      padding: 5px;
+      width: 150px;
+      margin-right: 10px;
+    }
+
+    .share-bar button {
+      background-color: transparent;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
       font-weight: bold;
-      font-size: 24px;
-      margin-bottom: 20px;
+    }
+
+    .share-bar button:hover {
+      color: #cccccc;
     }
   </style>
 </head>
 <body>
   <div class="toolbar">
-    <button onclick="editTitle()">Edit Title</button>
-    <button onclick="addSearchBar()">Add Search Bar</button>
-    <button onclick="createNewPage()">Create New Page</button>
-    <button onclick="editPage()">Edit Content</button>
+    <button onclick="addTitle()">Edit Title</button>
+    <button onclick="editPage()">Edit Page</button>
     <button onclick="injectHTML()">Inject HTML</button>
-    <button onclick="injectJS()">Inject JavaScript</button>
+    <button onclick="injectJavascript()">Inject JavaScript</button>
     <button onclick="embedContent()">Embed Content</button>
     <button onclick="addImage()">Add Image</button>
     <button onclick="addVideo()">Add Video</button>
@@ -60,179 +86,278 @@
     <button onclick="addShape()">Add Shape</button>
     <button onclick="addSeparator()">Add Separator</button>
     <button onclick="changeBackground()">Change Background</button>
+    <button onclick="changeTextStyle()">Change Text Style</button>
+    <button onclick="changeTextSize()">Change Text Size</button>
+    <button onclick="toggleTextStyle('bold')">Bold</button>
+    <button onclick="toggleTextStyle('italic')">Italic</button>
+    <button onclick="toggleTextStyle('underline')">Underline</button>
     <button onclick="downloadHTML()">Download HTML</button>
+    <button onclick="shareWebsite()">Share</button>
   </div>
 
   <div class="editor">
-    <h1 id="pageTitle">Welcome to the Website Builder</h1>
-    <div id="pageContent">
-      <p>Start editing your page here.</p>
-    </div>
-    <div id="searchBarContainer"></div>
+    <h1 id="pageTitle">My Website</h1>
+    <div id="pageContent"></div>
+  </div>
+
+  <div class="share-bar" id="shareBar">
+    <input type="text" id="shareIdInput" readonly>
+    <button onclick="copyShareId()">Copy</button>
   </div>
 
   <script>
-    var currentPage = 'page1';
-    var pages = {
-      page1: {
-        title: 'Welcome to the Website Builder',
-        content: '<p>Start editing your page here.</p>',
-        background: '',
-      },
-    };
+    // Global variables
+    var currentPage = 0;
+    var pages = [
+      { title: 'My Website', content: '' }
+    ];
 
-    function editTitle() {
+    // Functions for toolbar buttons
+    function addTitle() {
       var newTitle = prompt('Enter a new title:');
       if (newTitle) {
-        document.title = newTitle;
         document.getElementById('pageTitle').innerHTML = newTitle;
         pages[currentPage].title = newTitle;
       }
     }
 
-    function addSearchBar() {
-      var searchBar = '<input type="text" placeholder="Search...">';
-      document.getElementById('searchBarContainer').innerHTML = searchBar;
-    }
-
-    function createNewPage() {
-      var pageTitle = prompt('Enter the new page title:');
-      if (pageTitle) {
-        var newPageId = 'page' + (Object.keys(pages).length + 1);
-        pages[newPageId] = {
-          title: pageTitle,
-          content: '',
-          background: '',
-        };
-        currentPage = newPageId;
-        updateEditorContent();
-      }
-    }
-
     function editPage() {
-      document.getElementById('pageContent').focus();
+      var newContent = prompt('Enter the new page content:', pages[currentPage].content);
+      if (newContent) {
+        document.getElementById('pageContent').innerHTML = newContent;
+        pages[currentPage].content = newContent;
+      }
     }
 
     function injectHTML() {
-      var html = prompt('Enter HTML code:');
-      if (html) {
-        pages[currentPage].content += html;
-        updateEditorContent();
+      var htmlCode = prompt('Enter the HTML code to inject:');
+      if (htmlCode) {
+        document.getElementById('pageContent').innerHTML += htmlCode;
       }
     }
 
-    function injectJS() {
-      var js = prompt('Enter JavaScript code:');
-      if (js) {
-        var script = document.createElement('script');
-        script.innerHTML = js;
-        document.body.appendChild(script);
+    function injectJavascript() {
+      var jsCode = prompt('Enter the JavaScript code to inject:');
+      if (jsCode) {
+        eval(jsCode);
       }
     }
 
     function embedContent() {
-      var url = prompt('Enter content URL:');
-      if (url) {
-        pages[currentPage].content += '<iframe src="' + url + '"></iframe>';
-        updateEditorContent();
+      var embedURL = prompt('Enter the URL of the content to embed:');
+      if (embedURL) {
+        var embedCode = '<iframe src="' + embedURL + '"></iframe>';
+        document.getElementById('pageContent').innerHTML += embedCode;
       }
     }
 
     function addImage() {
-      var imgUrl = prompt('Enter image URL:');
-      if (imgUrl) {
-        pages[currentPage].content += '<img src="' + imgUrl + '">';
-        updateEditorContent();
+      var imageURL = prompt('Enter the URL of the image:');
+      if (imageURL) {
+        var imageTag = '<img src="' + imageURL + '">';
+        document.getElementById('pageContent').innerHTML += imageTag;
       }
     }
 
     function addVideo() {
-      var videoUrl = prompt('Enter video URL:');
-      if (videoUrl) {
-        pages[currentPage].content += '<video src="' + videoUrl + '" controls></video>';
-        updateEditorContent();
+      var videoURL = prompt('Enter the URL of the video (MP4):');
+      if (videoURL) {
+        var videoTag = '<video controls><source src="' + videoURL + '" type="video/mp4"></video>';
+        document.getElementById('pageContent').innerHTML += videoTag;
       }
     }
 
     function addButton() {
-      var buttonText = prompt('Enter button text:');
-      var buttonUrl = prompt('Enter button URL:');
-      if (buttonText && buttonUrl) {
-        var buttonHtml = '<a href="' + buttonUrl + '"><button>' + buttonText + '</button></a>';
-        pages[currentPage].content += buttonHtml;
-        updateEditorContent();
+      var buttonURL = prompt('Enter the URL for the button:');
+      if (buttonURL) {
+        var buttonTag = '<a href="' + buttonURL + '"><button>Click Me</button></a>';
+        document.getElementById('pageContent').innerHTML += buttonTag;
       }
     }
 
     function addLink() {
-      var linkText = prompt('Enter link text:');
-      var linkUrl = prompt('Enter link URL:');
-      if (linkText && linkUrl) {
-        var linkHtml = '<a href="' + linkUrl + '">' + linkText + '</a>';
-        pages[currentPage].content += linkHtml;
-        updateEditorContent();
+      var linkURL = prompt('Enter the URL for the link:');
+      if (linkURL) {
+        var linkText = prompt('Enter the text for the link:');
+        if (linkText) {
+          var linkTag = '<a href="' + linkURL + '">' + linkText + '</a>';
+          document.getElementById('pageContent').innerHTML += linkTag;
+        }
       }
     }
 
     function addText() {
-      var text = prompt('Enter text:');
-      if (text) {
-        var textHtml = '<p>' + text + '</p>';
-        pages[currentPage].content += textHtml;
-        updateEditorContent();
+      var textContent = prompt('Enter the text content:');
+      if (textContent) {
+        var textTag = '<p>' + textContent + '</p>';
+        document.getElementById('pageContent').innerHTML += textTag;
       }
     }
 
     function addSound() {
-      var soundUrl = prompt('Enter sound URL:');
-      if (soundUrl) {
-        var soundHtml = '<audio src="' + soundUrl + '" controls></audio>';
-        pages[currentPage].content += soundHtml;
-        updateEditorContent();
+      var soundURL = prompt('Enter the URL of the sound:');
+      if (soundURL) {
+        var soundTag = '<audio controls><source src="' + soundURL + '"></audio>';
+        document.getElementById('pageContent').innerHTML += soundTag;
       }
     }
 
     function addShape() {
-      var shapeType = prompt('Enter shape type (circle/square):');
-      if (shapeType === 'circle') {
-        var shapeHtml = '<div style="width: 100px; height: 100px; border-radius: 50%; background-color: #000000;"></div>';
-        pages[currentPage].content += shapeHtml;
-        updateEditorContent();
-      } else if (shapeType === 'square') {
-        var shapeHtml = '<div style="width: 100px; height: 100px; background-color: #000000;"></div>';
-        pages[currentPage].content += shapeHtml;
-        updateEditorContent();
+      var shapeType = prompt('Enter the shape type (circle or square):');
+      if (shapeType === 'circle' || shapeType === 'square') {
+        var shapeClass = shapeType === 'circle' ? 'circle-shape' : 'square-shape';
+        var shapeTag = '<div class="' + shapeClass + '"></div>';
+        document.getElementById('pageContent').innerHTML += shapeTag;
       }
     }
 
     function addSeparator() {
-      pages[currentPage].content += '<hr>';
-      updateEditorContent();
+      var separatorTag = '<hr>';
+      document.getElementById('pageContent').innerHTML += separatorTag;
     }
 
     function changeBackground() {
-      var bgUrl = prompt('Enter background image URL:');
-      if (bgUrl) {
-        pages[currentPage].background = 'url(' + bgUrl + ')';
-        updateEditorContent();
+      var imageURL = prompt('Enter the URL of the background image:');
+      if (imageURL) {
+        document.body.style.backgroundImage = 'url(' + imageURL + ')';
       }
     }
 
+    function changeTextStyle() {
+      var font = prompt('Enter the font family (e.g., Arial):');
+      if (font) {
+        document.getElementById('pageContent').style.fontFamily = font;
+      }
+    }
+
+    function changeTextSize() {
+      var fontSize = prompt('Enter the font size (e.g., 16px):');
+      if (fontSize) {
+        document.getElementById('pageContent').style.fontSize = fontSize;
+      }
+    }
+
+    function toggleTextStyle(style) {
+      var selectedText = getSelectedText();
+      if (selectedText) {
+        switch (style) {
+          case 'bold':
+            document.execCommand('bold', false, null);
+            break;
+          case 'italic':
+            document.execCommand('italic', false, null);
+            break;
+          case 'underline':
+            document.execCommand('underline', false, null);
+            break;
+        }
+      }
+    }
+
+    function getSelectedText() {
+      var text = '';
+      if (window.getSelection) {
+        text = window.getSelection().toString();
+      } else if (document.selection && document.selection.type != 'Control') {
+        text = document.selection.createRange().text;
+      }
+      return text;
+    }
+
     function downloadHTML() {
-      var htmlContent = '<html><head><title>' + pages[currentPage].title + '</title></head><body style="background: ' + pages[currentPage].background + '">' + pages[currentPage].content + '</body></html>';
-      var blob = new Blob([htmlContent], { type: 'text/html' });
+      var pageTitle = document.getElementById('pageTitle').innerHTML;
+      var pageContent = document.getElementById('pageContent').innerHTML;
+      var html = '<!DOCTYPE html>\n<html>\n<head>\n<title>' + pageTitle + '</title>\n</head>\n<body>\n' + pageContent + '\n</body>\n</html>';
+
+      // Remove toolbar and share bar before downloading
+      var toolbar = document.querySelector('.toolbar');
+      var shareBar = document.querySelector('.share-bar');
+      if (toolbar) {
+        toolbar.remove();
+      }
+      if (shareBar) {
+        shareBar.remove();
+      }
+
+      var blob = new Blob([html], { type: 'text/html' });
       var url = URL.createObjectURL(blob);
       var a = document.createElement('a');
       a.href = url;
-      a.download = currentPage + '.html';
+      a.download = 'website.html';
       a.click();
     }
 
-    function updateEditorContent() {
-      document.getElementById('pageContent').innerHTML = pages[currentPage].content;
-      document.getElementById('pageTitle').innerHTML = pages[currentPage].title;
-      document.body.style.backgroundImage = pages[currentPage].background;
+    function shareWebsite() {
+      var shareId = generateShareId();
+      var shareUrl = window.location.origin + window.location.pathname + '?id=' + shareId;
+      document.getElementById('shareIdInput').value = shareUrl;
+      showShareBar();
     }
+
+    function generateShareId() {
+      var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      var shareId = '';
+      var length = 6; // Change the length of the share ID if desired
+      for (var i = 0; i < length; i++) {
+        var randomIndex = Math.floor(Math.random() * characters.length);
+        shareId += characters.charAt(randomIndex);
+      }
+      return shareId;
+    }
+
+    function copyShareId() {
+      var shareIdInput = document.getElementById('shareIdInput');
+      shareIdInput.select();
+      shareIdInput.setSelectionRange(0, 99999); /* For mobile devices */
+      document.execCommand('copy');
+      alert('Share URL copied to clipboard!');
+    }
+
+    // Initialize the page
+    function init() {
+      // Check if there is a share ID in the query string
+      var queryString = window.location.search;
+      if (queryString) {
+        var urlParams = new URLSearchParams(queryString);
+        var shareId = urlParams.get('id');
+        if (shareId) {
+          // Load the shared website
+          var sharedWebsite = getSharedWebsite(shareId);
+          if (sharedWebsite) {
+            pages = sharedWebsite.pages;
+            currentPage = 0;
+            loadPage(currentPage);
+          }
+        }
+      } else {
+        // Load a new page
+        loadPage(currentPage);
+      }
+    }
+
+    function loadPage(index) {
+      var page = pages[index];
+      document.getElementById('pageTitle').innerHTML = page.title;
+      document.getElementById('pageContent').innerHTML = page.content;
+    }
+
+    function getSharedWebsite(shareId) {
+      // Replace this with your own logic to fetch the shared website
+      var sharedWebsites = JSON.parse(localStorage.getItem('sharedWebsites')) || [];
+      var sharedWebsite = sharedWebsites.find(function (website) {
+        return website.shareId === shareId;
+      });
+      return sharedWebsite;
+    }
+
+    function showShareBar() {
+      var shareBar = document.getElementById('shareBar');
+      if (shareBar) {
+        shareBar.style.display = 'block';
+      }
+    }
+
+    init();
   </script>
 </body>
 </html>
