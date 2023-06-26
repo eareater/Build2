@@ -45,6 +45,8 @@
 <body>
   <div class="toolbar">
     <button onclick="editTitle()">Edit Title</button>
+    <button onclick="addSearchBar()">Add Search Bar</button>
+    <button onclick="createNewPage()">Create New Page</button>
     <button onclick="editPage()">Edit Content</button>
     <button onclick="injectHTML()">Inject HTML</button>
     <button onclick="injectJS()">Inject JavaScript</button>
@@ -62,17 +64,45 @@
 
   <div class="editor">
     <h1 id="pageTitle">Welcome to the Website Builder</h1>
-    <div contenteditable="true" id="pageContent">
+    <div id="pageContent">
       <p>Start editing your page here.</p>
     </div>
+    <div id="searchBarContainer"></div>
   </div>
 
   <script>
+    var currentPage = 'page1';
+    var pages = {
+      page1: {
+        title: 'Welcome to the Website Builder',
+        content: '<p>Start editing your page here.</p>',
+      },
+    };
+
     function editTitle() {
       var newTitle = prompt('Enter a new title:');
       if (newTitle) {
         document.title = newTitle;
         document.getElementById('pageTitle').innerHTML = newTitle;
+        pages[currentPage].title = newTitle;
+      }
+    }
+
+    function addSearchBar() {
+      var searchBar = '<input type="text" placeholder="Search...">';
+      document.getElementById('searchBarContainer').innerHTML = searchBar;
+    }
+
+    function createNewPage() {
+      var pageTitle = prompt('Enter the new page title:');
+      if (pageTitle) {
+        var newPageId = 'page' + (Object.keys(pages).length + 1);
+        pages[newPageId] = {
+          title: pageTitle,
+          content: '',
+        };
+        currentPage = newPageId;
+        updateEditorContent();
       }
     }
 
@@ -83,7 +113,8 @@
     function injectHTML() {
       var html = prompt('Enter HTML code:');
       if (html) {
-        document.getElementById('pageContent').insertAdjacentHTML('beforeend', html);
+        pages[currentPage].content += html;
+        updateEditorContent();
       }
     }
 
@@ -99,21 +130,24 @@
     function embedContent() {
       var url = prompt('Enter content URL:');
       if (url) {
-        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<iframe src="' + url + '"></iframe>');
+        pages[currentPage].content += '<iframe src="' + url + '"></iframe>';
+        updateEditorContent();
       }
     }
 
     function addImage() {
       var imgUrl = prompt('Enter image URL:');
       if (imgUrl) {
-        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<img src="' + imgUrl + '">');
+        pages[currentPage].content += '<img src="' + imgUrl + '">';
+        updateEditorContent();
       }
     }
 
     function addVideo() {
       var videoUrl = prompt('Enter video URL:');
       if (videoUrl) {
-        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<video src="' + videoUrl + '" controls></video>');
+        pages[currentPage].content += '<video src="' + videoUrl + '" controls></video>';
+        updateEditorContent();
       }
     }
 
@@ -121,7 +155,9 @@
       var buttonText = prompt('Enter button text:');
       var buttonUrl = prompt('Enter button URL:');
       if (buttonText && buttonUrl) {
-        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<a href="' + buttonUrl + '"><button>' + buttonText + '</button></a>');
+        var buttonHtml = '<a href="' + buttonUrl + '"><button>' + buttonText + '</button></a>';
+        pages[currentPage].content += buttonHtml;
+        updateEditorContent();
       }
     }
 
@@ -129,45 +165,61 @@
       var linkText = prompt('Enter link text:');
       var linkUrl = prompt('Enter link URL:');
       if (linkText && linkUrl) {
-        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<a href="' + linkUrl + '">' + linkText + '</a>');
+        var linkHtml = '<a href="' + linkUrl + '">' + linkText + '</a>';
+        pages[currentPage].content += linkHtml;
+        updateEditorContent();
       }
     }
 
     function addText() {
       var text = prompt('Enter text:');
       if (text) {
-        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<p>' + text + '</p>');
+        var textHtml = '<p>' + text + '</p>';
+        pages[currentPage].content += textHtml;
+        updateEditorContent();
       }
     }
 
     function addSound() {
       var soundUrl = prompt('Enter sound URL:');
       if (soundUrl) {
-        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<audio src="' + soundUrl + '" controls></audio>');
+        var soundHtml = '<audio src="' + soundUrl + '" controls></audio>';
+        pages[currentPage].content += soundHtml;
+        updateEditorContent();
       }
     }
 
     function addShape() {
       var shapeType = prompt('Enter shape type (circle/square):');
       if (shapeType === 'circle') {
-        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<div style="width: 100px; height: 100px; border-radius: 50%; background-color: #000000;"></div>');
+        var shapeHtml = '<div style="width: 100px; height: 100px; border-radius: 50%; background-color: #000000;"></div>';
+        pages[currentPage].content += shapeHtml;
+        updateEditorContent();
       } else if (shapeType === 'square') {
-        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<div style="width: 100px; height: 100px; background-color: #000000;"></div>');
+        var shapeHtml = '<div style="width: 100px; height: 100px; background-color: #000000;"></div>';
+        pages[currentPage].content += shapeHtml;
+        updateEditorContent();
       }
     }
 
     function addSeparator() {
-      document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<hr>');
+      pages[currentPage].content += '<hr>';
+      updateEditorContent();
     }
 
     function downloadHTML() {
-      var htmlContent = document.getElementById('pageContent').innerHTML;
+      var htmlContent = '<html><head><title>' + pages[currentPage].title + '</title></head><body>' + pages[currentPage].content + '</body></html>';
       var blob = new Blob([htmlContent], { type: 'text/html' });
       var url = URL.createObjectURL(blob);
       var a = document.createElement('a');
       a.href = url;
-      a.download = 'index.html';
+      a.download = currentPage + '.html';
       a.click();
+    }
+
+    function updateEditorContent() {
+      document.getElementById('pageContent').innerHTML = pages[currentPage].content;
+      document.getElementById('pageTitle').innerHTML = pages[currentPage].title;
     }
   </script>
 </body>
