@@ -1,118 +1,174 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Website Builder</title>
-    <style>
-        /* CSS styles for the toolbar */
-        .toolbar {
-            background: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            font-family: Arial, sans-serif;
-            padding: 10px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 9999;
-        }
-        .toolbar button {
-            background: none;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            font-size: 14px;
-            margin-right: 10px;
-            outline: none;
-        }
-        .toolbar button:hover {
-            text-decoration: underline;
-        }
-    </style>
+  <title>Website Builder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .toolbar {
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #ffffff;
+      padding: 10px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 9999;
+    }
+
+    .toolbar button {
+      background-color: transparent;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    .toolbar button:hover {
+      color: #cccccc;
+    }
+
+    .editor {
+      margin-top: 50px;
+      padding: 20px;
+    }
+
+    .editor h1 {
+      font-weight: bold;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-    <div class="toolbar">
-        <!-- Buttons for various features -->
-        <button onclick="editPage()">Edit Page</button>
-        <button onclick="injectHTML()">Inject HTML</button>
-        <button onclick="injectJS()">Inject JavaScript</button>
-        <button onclick="embedContent()">Embed Content</button>
-        <button onclick="addImage()">Add Image</button>
-        <button onclick="addVideo()">Add Video</button>
-        <button onclick="addButton()">Add Button</button>
-        <button onclick="addLink()">Add Link</button>
-        <button onclick="addText()">Add Text</button>
-        <button onclick="addSound()">Add Sound</button>
-        <button onclick="changeFont()">Change Font</button>
-        <button onclick="changeTextStyle()">Change Text Style</button>
-        <button onclick="addShape()">Add Shape</button>
-        <button onclick="addSeparator()">Add Separator</button>
-        <button onclick="downloadHTML()">Download HTML</button>
+  <div class="toolbar">
+    <button onclick="editTitle()">Edit Title</button>
+    <button onclick="editPage()">Edit Content</button>
+    <button onclick="injectHTML()">Inject HTML</button>
+    <button onclick="injectJS()">Inject JavaScript</button>
+    <button onclick="embedContent()">Embed Content</button>
+    <button onclick="addImage()">Add Image</button>
+    <button onclick="addVideo()">Add Video</button>
+    <button onclick="addButton()">Add Button</button>
+    <button onclick="addLink()">Add Link</button>
+    <button onclick="addText()">Add Text</button>
+    <button onclick="addSound()">Add Sound</button>
+    <button onclick="addShape()">Add Shape</button>
+    <button onclick="addSeparator()">Add Separator</button>
+    <button onclick="downloadHTML()">Download HTML</button>
+  </div>
+
+  <div class="editor">
+    <h1 id="pageTitle">Welcome to the Website Builder</h1>
+    <div contenteditable="true" id="pageContent">
+      <p>Start editing your page here.</p>
     </div>
+  </div>
 
-    <!-- Rest of the website content -->
-    <!-- Your website content goes here -->
+  <script>
+    function editTitle() {
+      var newTitle = prompt('Enter a new title:');
+      if (newTitle) {
+        document.title = newTitle;
+        document.getElementById('pageTitle').innerHTML = newTitle;
+      }
+    }
 
-    <script>
-        // JavaScript functions for the various features
-        function editPage() {
-            // Implement the functionality to edit the page
-        }
+    function editPage() {
+      document.getElementById('pageContent').focus();
+    }
 
-        function injectHTML() {
-            // Implement the functionality to inject HTML
-        }
+    function injectHTML() {
+      var html = prompt('Enter HTML code:');
+      if (html) {
+        document.getElementById('pageContent').insertAdjacentHTML('beforeend', html);
+      }
+    }
 
-        function injectJS() {
-            // Implement the functionality to inject JavaScript
-        }
+    function injectJS() {
+      var js = prompt('Enter JavaScript code:');
+      if (js) {
+        var script = document.createElement('script');
+        script.innerHTML = js;
+        document.body.appendChild(script);
+      }
+    }
 
-        function embedContent() {
-            // Implement the functionality to embed content
-        }
+    function embedContent() {
+      var url = prompt('Enter content URL:');
+      if (url) {
+        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<iframe src="' + url + '"></iframe>');
+      }
+    }
 
-        function addImage() {
-            // Implement the functionality to add an image
-        }
+    function addImage() {
+      var imgUrl = prompt('Enter image URL:');
+      if (imgUrl) {
+        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<img src="' + imgUrl + '">');
+      }
+    }
 
-        function addVideo() {
-            // Implement the functionality to add a video
-        }
+    function addVideo() {
+      var videoUrl = prompt('Enter video URL:');
+      if (videoUrl) {
+        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<video src="' + videoUrl + '" controls></video>');
+      }
+    }
 
-        function addButton() {
-            // Implement the functionality to add a button
-        }
+    function addButton() {
+      var buttonText = prompt('Enter button text:');
+      var buttonUrl = prompt('Enter button URL:');
+      if (buttonText && buttonUrl) {
+        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<a href="' + buttonUrl + '"><button>' + buttonText + '</button></a>');
+      }
+    }
 
-        function addLink() {
-            // Implement the functionality to add a link
-        }
+    function addLink() {
+      var linkText = prompt('Enter link text:');
+      var linkUrl = prompt('Enter link URL:');
+      if (linkText && linkUrl) {
+        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<a href="' + linkUrl + '">' + linkText + '</a>');
+      }
+    }
 
-        function addText() {
-            // Implement the functionality to add text
-        }
+    function addText() {
+      var text = prompt('Enter text:');
+      if (text) {
+        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<p>' + text + '</p>');
+      }
+    }
 
-        function addSound() {
-            // Implement the functionality to add a sound
-        }
+    function addSound() {
+      var soundUrl = prompt('Enter sound URL:');
+      if (soundUrl) {
+        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<audio src="' + soundUrl + '" controls></audio>');
+      }
+    }
 
-        function changeFont() {
-            // Implement the functionality to change the font
-        }
+    function addShape() {
+      var shapeType = prompt('Enter shape type (circle/square):');
+      if (shapeType === 'circle') {
+        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<div style="width: 100px; height: 100px; border-radius: 50%; background-color: #000000;"></div>');
+      } else if (shapeType === 'square') {
+        document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<div style="width: 100px; height: 100px; background-color: #000000;"></div>');
+      }
+    }
 
-        function changeTextStyle() {
-            // Implement the functionality to change the text style
-        }
+    function addSeparator() {
+      document.getElementById('pageContent').insertAdjacentHTML('beforeend', '<hr>');
+    }
 
-        function addShape() {
-            // Implement the functionality to add a shape
-        }
-
-        function addSeparator() {
-            // Implement the functionality to add a separator
-        }
-
-        function downloadHTML() {
-            // Implement the functionality to download the HTML
-        }
-    </script>
+    function downloadHTML() {
+      var htmlContent = document.getElementById('pageContent').innerHTML;
+      var blob = new Blob([htmlContent], { type: 'text/html' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'index.html';
+      a.click();
+    }
+  </script>
 </body>
 </html>
